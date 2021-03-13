@@ -1,0 +1,53 @@
+trigger:
+
+  branches:
+    include:
+    - master
+
+variables:
+  - name: pool-name
+    value: 'Azure Pipelines'
+
+  - name: vm-image-name
+    value: 'windows-latest' # Only valid for MS-hosted pools
+#    value: 'ubuntu-18.04' # Only valid for MS-hosted pools
+
+  - name: dotnetsdk
+    value: '5.0.200'
+  - name: buildConfiguration
+    value: 'Release'
+  - name: buildPlatform
+    value: 'any cpu'
+
+
+stages:
+  - stage: Build
+
+    jobs:
+    - job: Build
+      pool:
+        name: $(pool-name)
+        vmImage: $(vm-image-name)
+        # demands:
+        # - agent.os -equals Linux
+
+      steps:
+      - checkout: self
+        persistCredentials: true
+        clean: true
+
+      - task: UseDotNet@2
+        displayName: 'Use .NET Core sdk $(dotnetsdk)'
+        inputs:
+          version: '$(dotnetsdk)'
+
+      - task: DotNetCoreCLI@2
+        displayName: dotnet restore
+        inputs:
+          command: restore
+          projects: '**/*.csproj'
+          feedsToUse: 'config'
+          nugetConfigPath: 'NuGet.config'
+          includeNuGetOrg: false
+          verbosityRestore: minimal
+
