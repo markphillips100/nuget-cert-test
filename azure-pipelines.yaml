@@ -2,15 +2,16 @@ trigger:
 
   branches:
     include:
-    - master
+    - main
+    - issue/*
 
 variables:
   - name: pool-name
     value: 'Azure Pipelines'
 
   - name: vm-image-name
-    value: 'windows-latest' # Only valid for MS-hosted pools
-#    value: 'ubuntu-18.04' # Only valid for MS-hosted pools
+#    value: 'windows-latest' # Works on windows build agents
+    value: 'ubuntu-18.04' # NU3018 error
 
   - name: dotnetsdk
     value: '5.0.200'
